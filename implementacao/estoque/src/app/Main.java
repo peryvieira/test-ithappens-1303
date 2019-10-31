@@ -1,7 +1,6 @@
 package app;
 
-import model;
-import model.Produto;
+import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
