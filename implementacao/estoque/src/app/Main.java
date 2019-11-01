@@ -2,13 +2,9 @@ package app;
 
 import model.*;
 
-import java.io.Console;
 import java.util.Scanner;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -35,13 +31,13 @@ public class Main {
 
         do {
 
-            System.out.printf("\n\n ### FILIAL : %s ###", filialAtual.getNome_filial());
-            System.out.println("\n =========================");
-            System.out.println(" | 1 - Nova Venda      |");
-            System.out.println(" | 2 - Entrada Estoque |");
-            System.out.println(" | 3 - Trocar Filial   |");
-            System.out.println(" | 0 - Sair            |");
-            System.out.println(" =========================\n");
+            System.out.printf("\n\n   ### FILIAL : %s ###", filialAtual.getNome_filial());
+            System.out.println("\n ===================================");
+            System.out.println(" | 1 - Iniciar Nova Venda           |");
+            System.out.println(" | 2 - Adicionar Produto ao Estoque |");
+            System.out.println(" | 3 - Trocar de Filial             |");
+            System.out.println(" | 0 - Sair                         |");
+            System.out.println(" ===================================\n");
 
             opcao = scan.nextInt();
             System.out.print("\n");
@@ -192,7 +188,7 @@ public class Main {
         pedidoEntrada.setObservacao_pedido(observacao);
 
         do {
-            System.out.println("Deseja inserir Produto? (1- SIM | 2 - NÃO) :");
+            System.out.println("Deseja inserir Novo Produto? (1- SIM | 2 - NÃO) :");
             opcao = scan.nextInt();
             scan.nextLine();
 
@@ -207,9 +203,9 @@ public class Main {
                     limpaTela();
                     System.out.println("\nProduto Não Encontrado\n");
                     System.out.println("Cadastrando Produto...\n");
-                    System.out.print("Insira valor de custo: ");
+                    System.out.print("Insira valor de custo do Produto (casa decimal separada por virgulas): ");
                     double valor = scan.nextDouble();
-                    System.out.print("\nInsira o valor de venda: ");
+                    System.out.print("\nInsira o valor de venda do Produto (casa decimal separada por virgulas): ");
                     double valorVenda = scan.nextDouble();
                     System.out.print("\nInsira quantidade de produto para entrada: ");
                     int qnt = scan.nextInt();

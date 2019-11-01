@@ -29,7 +29,6 @@ public class PedidoEstoque {
     }
 
     public PedidoEstoque(Estoque estoque, Usuario usuario, Cliente cliente, TipoPedido tipoPedido) {
-        this.id = id;
         this.estoque = estoque;
         this.usuario = usuario;
         this.cliente = cliente;

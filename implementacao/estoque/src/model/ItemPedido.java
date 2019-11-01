@@ -13,7 +13,6 @@ public class ItemPedido {
     private int qnt_item;
     private double valor_unitario;
     private double valor_total;
-    // private double valor_custo;
     private StatusPedido statusPedido = StatusPedido.ATIVO;
 
     // Para saída de Produto
@@ -43,10 +42,6 @@ public class ItemPedido {
     public int getQnt_item() {
         return qnt_item;
     }
-
-    // private void setQnt_item(int qnt_item) {
-    // this.qnt_item = qnt_item;
-    // }
 
     public double getValor_unitario() {
         return valor_unitario;
