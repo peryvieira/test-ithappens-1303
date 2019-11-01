@@ -1,6 +1,8 @@
 
 package model;
 
+import model.*;
+
 /**
  *
  * @author peryv
@@ -8,17 +10,25 @@ package model;
 
 public class ItemPedido {
     private Produto produto;
-    private PedidoEstoque pedido;
     private int qnt_item;
     private double valor_unitario;
     private double valor_total;
+    private StatusPedido statusPedido = StatusPedido.ATIVO;
 
-    public ItemPedido(Produto produto, PedidoEstoque pedido, int qnt_item, double valor_unitario, double valor_total) {
+    // Para saída de Produto
+    public ItemPedido(Produto produto, int qnt_item, double valor_unitario, double valor_total) {
         this.produto = produto;
-        this.pedido = pedido;
         this.qnt_item = qnt_item;
         this.valor_unitario = valor_unitario;
         this.valor_total = valor_total;
+    }
+
+    // Para Entrada de Produto (não precisa somar valor se for para entrada de
+    // estoque).
+    public ItemPedido(Produto produto, int qnt_item) {
+        this.produto = produto;
+        this.qnt_item = qnt_item;
+
     }
 
     public Produto getProduto() {
@@ -29,20 +39,8 @@ public class ItemPedido {
         this.produto = produto;
     }
 
-    public PedidoEstoque getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(PedidoEstoque pedido) {
-        this.pedido = pedido;
-    }
-
     public int getQnt_item() {
         return qnt_item;
-    }
-
-    public void setQnt_item(int qnt_item) {
-        this.qnt_item = qnt_item;
     }
 
     public double getValor_unitario() {
@@ -59,6 +57,19 @@ public class ItemPedido {
 
     public void setValor_total(double valor_total) {
         this.valor_total = valor_total;
+    }
+
+    public void adicionarQuantidade(int quantidade) {
+        this.qnt_item = qnt_item + quantidade;
+        this.valor_total = qnt_item * getValor_unitario();
+    }
+
+    public StatusPedido getStatusPedido() {
+        return statusPedido;
+    }
+
+    public void setStatusPedido(StatusPedido statusPedido) {
+        this.statusPedido = statusPedido;
     }
 
 }
