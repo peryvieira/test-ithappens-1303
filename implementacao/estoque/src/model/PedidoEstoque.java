@@ -28,13 +28,12 @@ public class PedidoEstoque {
 
     }
 
-    public PedidoEstoque(int id, Estoque estoque, Usuario usuario, Cliente cliente, String observacao_pedido,
-            TipoPedido tipoPedido) {
+    public PedidoEstoque(Estoque estoque, Usuario usuario, Cliente cliente, TipoPedido tipoPedido) {
         this.id = id;
         this.estoque = estoque;
         this.usuario = usuario;
         this.cliente = cliente;
-        this.observacao_pedido = observacao_pedido;
+
         this.tipoPedido = tipoPedido;
 
     }
@@ -102,8 +101,9 @@ public class PedidoEstoque {
 
         if (tipoPedido == TipoPedido.SAIDA) {
             int quantidadeEstoque = this.estoque.getQnt_estoque(produto);
+            int quantidadePedido = verificaQuantidadePedidoAtual(produto);
 
-            if (quantidadeEstoque < quantidade) {
+            if (quantidadeEstoque < quantidadePedido + quantidade) {
                 System.out.println("Quantidade menor do que o Estoque !");
             } else {
                 boolean flagNovoProduto = true;
@@ -138,6 +138,16 @@ public class PedidoEstoque {
                     .println(String.valueOf(quantidade) + " " + produto.getDescricao() + " Adicionado(s) ao Pedido\n");
         }
 
+    }
+
+    private int verificaQuantidadePedidoAtual(Produto produto) {
+        int quant = 0;
+        for (ItemPedido itemPedido : itemPedidoLista) {
+            if (itemPedido.getProduto() == produto) {
+                quant = quant + itemPedido.getQnt_item();
+            }
+        }
+        return quant;
     }
 
     public void excluirItemPedido(Produto produto) {
@@ -175,7 +185,6 @@ public class PedidoEstoque {
 
         if (tipoPedido == TipoPedido.SAIDA) {
             for (ItemPedido itemPedido : itemPedidoLista) {
-
                 System.out.printf(
                         "Produto: %s \nQuantidade: %d\nValor Unitario: %.2f\nValor Total: %.2f\nStatus do Item: %s\n----------------------\n",
                         itemPedido.getProduto().getDescricao(), itemPedido.getQnt_item(),
@@ -245,25 +254,33 @@ public class PedidoEstoque {
                     itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
                 }
             }
+            listaItens();
         }
-        System.out.println("Pedido Efetuado com Sucesso\n");
+
+        System.out.println("\nPedido Concluido com Sucesso\n________________________");
 
     }
 
-    public Produto buscarProduto(String descricao) {
-        Produto produtoEncontrado = new Produto();
-        boolean flagProdutoEncontrado = false;
-
-        for (Produto produto : estoque.estoqueProdutos.keySet()) {
-            if (produto.getDescricao() == descricao) {
-                produtoEncontrado = produto;
-                flagProdutoEncontrado = true;
-                System.out.println("Produto Encontrado!");
+    public Produto buscarProdutoPedido(String descricao) {
+        Produto produto = new Produto();
+        for (ItemPedido itemPedido : itemPedidoLista) {
+            if (itemPedido.getProduto().getDescricao().equals(descricao)) {
+                produto = itemPedido.getProduto();
             }
         }
-        if (!flagProdutoEncontrado) {
 
+        return produto;
+
+    }
+
+    public StatusPedido getStatusPedido(Produto produto) {
+        StatusPedido status = StatusPedido.ATIVO;
+
+        for (ItemPedido itemPedido : itemPedidoLista) {
+            if (itemPedido.getProduto() == produto) {
+                status = itemPedido.getStatusPedido();
+            }
         }
-        return produtoEncontrado;
+        return status;
     }
 }

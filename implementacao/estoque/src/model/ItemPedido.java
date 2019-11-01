@@ -66,6 +66,7 @@ public class ItemPedido {
 
     public void adicionarQuantidade(int quantidade) {
         this.qnt_item = qnt_item + quantidade;
+        this.valor_total = qnt_item * getValor_unitario();
     }
 
     public StatusPedido getStatusPedido() {

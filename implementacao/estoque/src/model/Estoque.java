@@ -43,9 +43,8 @@ public class Estoque {
         }
     }
 
-    public Produto buscarProdutoDescricao(String descricao) {
+    public Produto buscarProdutoEstoque(String descricao) {
         Produto produtoEncontrado = new Produto();
-
 
         for (Produto produto : estoqueProdutos.keySet()) {
             if (produto.getDescricao().equals(descricao)) {
