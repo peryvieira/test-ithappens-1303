@@ -8,6 +8,7 @@ package model;
 import java.util.List;
 import java.util.ArrayList;
 import model.TipoPedido;
+import java.util.Scanner;
 
 /**
  *
@@ -21,6 +22,7 @@ public class PedidoEstoque {
     private String observacao_pedido;
     private TipoPedido tipoPedido;
     private List<ItemPedido> itemPedidoLista = new ArrayList<ItemPedido>();
+    private FormaPagamento formaPagamento;
 
     public PedidoEstoque(int id, Estoque estoque, Usuario usuario, Cliente cliente, String observacao_pedido,
             TipoPedido tipoPedido) {
@@ -32,6 +34,7 @@ public class PedidoEstoque {
         this.tipoPedido = tipoPedido;
 
     }
+    // #region Getters / Setters
 
     public int getId() {
         return id;
@@ -80,6 +83,16 @@ public class PedidoEstoque {
     public void setTipoPedido(TipoPedido tipoPedido) {
         this.tipoPedido = tipoPedido;
     }
+
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
+    public FormaPagamento getFormaPagamento() {
+        return this.formaPagamento;
+    }
+
+    // #endregion
 
     public void adicionarItemPedido(Produto produto, int quantidade) {
 
@@ -156,8 +169,40 @@ public class PedidoEstoque {
         }
     }
 
+    private void informarFormaPagamento() {
+        boolean flagFormaPagamento = true;
+
+        while (flagFormaPagamento) {
+            Scanner ler = new Scanner(System.in);
+            System.out.print("Informa Método de Pagamento(1- A vista | 2- Cartao | 3- Boleto: ");
+            int opcao = ler.nextInt();
+            switch (opcao) {
+            case 1:
+                this.setFormaPagamento(FormaPagamento.A_VISTA);
+                flagFormaPagamento = false;
+                break;
+            case 2:
+                this.setFormaPagamento(FormaPagamento.CARTAO);
+                flagFormaPagamento = false;
+                break;
+            case 3:
+                this.setFormaPagamento(FormaPagamento.BOLETO);
+                flagFormaPagamento = false;
+                break;
+            default:
+                System.out.println("Opção Inválida");
+                flagFormaPagamento = true;
+                break;
+            }
+        }
+
+    }
+
     public void concluirPedido() {
         if (tipoPedido == TipoPedido.ENTRADA) {
+
+            this.informarFormaPagamento();
+
             for (ItemPedido itemPedido : itemPedidoLista) {
                 estoque.entrada(itemPedido.getProduto(), itemPedido.getQnt_item());
                 itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
@@ -168,7 +213,7 @@ public class PedidoEstoque {
                 itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
             }
         }
-        System.out.println("Processado");
+        System.out.println("Pedido Efetuado com Sucesso");
 
     }
 
