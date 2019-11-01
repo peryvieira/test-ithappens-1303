@@ -1,15 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package model;
 
+import model.TipoPedido;
+import model.StatusPedido;
+import model.FormaPagamento;
+import model.ItemPedido;
 import java.util.List;
 import java.util.ArrayList;
-import model.TipoPedido;
 import java.util.Scanner;
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -25,6 +23,10 @@ public class PedidoEstoque {
     private TipoPedido tipoPedido;
     private List<ItemPedido> itemPedidoLista = new ArrayList<ItemPedido>();
     private FormaPagamento formaPagamento;
+
+    public PedidoEstoque() {
+
+    }
 
     public PedidoEstoque(int id, Estoque estoque, Usuario usuario, Cliente cliente, String observacao_pedido,
             TipoPedido tipoPedido) {
@@ -104,19 +106,9 @@ public class PedidoEstoque {
             if (quantidadeEstoque < quantidade) {
                 System.out.println("Quantidade menor do que o Estoque !");
             } else {
-                double valor_custo = produto.getValor_custo();
-                double valor_total = produto.getValor_custo() * quantidade;
-
-                ItemPedido item = new ItemPedido(produto, quantidade, valor_custo, valor_total);
-
-                itemPedidoLista.add(item);
-
-                System.out.println("Item " + produto.getDescricao() + " adicionado ao Pedido ");
-            }
-        } else {
-            if (quantidade >= 0) {
                 boolean flagNovoProduto = true;
 
+                // Impede Repetição de Produtos iguais na Lista de Itens
                 for (ItemPedido itemPedido : itemPedidoLista) {
                     if (itemPedido.getProduto() == produto) {
                         itemPedido.adicionarQuantidade(quantidade);
@@ -124,17 +116,28 @@ public class PedidoEstoque {
                     }
                 }
 
+                // Novo Produto na Lista de Itens
                 if (flagNovoProduto) {
+                    double valor_custo = produto.getValor_custo();
+                    double valor_total = produto.getValor_custo() * quantidade;
 
-                    ItemPedido item = new ItemPedido(produto, quantidade);
+                    ItemPedido item = new ItemPedido(produto, quantidade, valor_custo, valor_total);
+
                     itemPedidoLista.add(item);
                 }
 
-                System.out.println(
-                        String.valueOf(quantidade) + " " + produto.getDescricao() + " Adicionado(s) ao Estoque\n");
-
+                System.out.println("Item " + produto.getDescricao() + " adicionado ao Pedido ");
             }
+        } else {
+
+            // PEDIDO DE ENTRADA
+
+            ItemPedido item = new ItemPedido(produto, quantidade);
+            itemPedidoLista.add(item);
+            System.out
+                    .println(String.valueOf(quantidade) + " " + produto.getDescricao() + " Adicionado(s) ao Pedido\n");
         }
+
     }
 
     public void excluirItemPedido(Produto produto) {
@@ -143,7 +146,8 @@ public class PedidoEstoque {
         for (Iterator<ItemPedido> itemPedido = itemPedidoLista.iterator(); itemPedido.hasNext();) {
             ItemPedido item = itemPedido.next();
             if (item.getProduto() == produto) {
-                itemPedido.remove();
+                item.setStatusPedido(StatusPedido.CANCELADO);
+
                 flagExcluido = true;
             }
         }
@@ -155,20 +159,37 @@ public class PedidoEstoque {
         }
     }
 
+    private double somaValorPedido() {
+        // Não soma Item com Status Cancelado
+        double soma = 0;
+        for (ItemPedido itemPedido : itemPedidoLista) {
+            if (itemPedido.getStatusPedido() != StatusPedido.CANCELADO)
+                soma = soma + itemPedido.getValor_total();
+        }
+        return soma;
+    }
+
     public void listaItens() {
+
+        double valorFinal = this.somaValorPedido();
+
         if (tipoPedido == TipoPedido.SAIDA) {
             for (ItemPedido itemPedido : itemPedidoLista) {
+
                 System.out.printf(
-                        "Produto: %s \nQuantidade: %d\nValor Unitario: %.2f\nValor Total: %.2f\n----------------------\n",
+                        "Produto: %s \nQuantidade: %d\nValor Unitario: %.2f\nValor Total: %.2f\nStatus do Item: %s\n----------------------\n",
                         itemPedido.getProduto().getDescricao(), itemPedido.getQnt_item(),
-                        itemPedido.getValor_unitario(), itemPedido.getValor_total());
+                        itemPedido.getValor_unitario(), itemPedido.getValor_total(),
+                        String.valueOf(itemPedido.getStatusPedido()));
             }
+            System.out.printf("______________________\nValor Final: %.2f\n______________________\n", valorFinal);
         } else {
             for (ItemPedido itemPedido : itemPedidoLista) {
                 System.out.printf(
-                        "Produto: %s \nQuantidade: %d\nValor Custo: %.2f\nValor Unitario: %.2f\n----------------------\n",
+                        "Produto: %s \nQuantidade: %d\nValor Custo: %.2f\nValor Unitario: %.2f\nStatus do Item: %s\n----------------------\n",
                         itemPedido.getProduto().getDescricao(), itemPedido.getQnt_item(),
-                        itemPedido.getProduto().getValor_custo(), itemPedido.getProduto().getValor_unitario());
+                        itemPedido.getProduto().getValor_custo(), itemPedido.getProduto().getValor_unitario(),
+                        String.valueOf(itemPedido.getStatusPedido()));
             }
         }
     }
@@ -206,18 +227,43 @@ public class PedidoEstoque {
         if (tipoPedido == TipoPedido.ENTRADA) {
 
             for (ItemPedido itemPedido : itemPedidoLista) {
-                estoque.entrada(itemPedido.getProduto(), itemPedido.getQnt_item());
-                itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
+                if (itemPedido.getStatusPedido() != StatusPedido.CANCELADO) {
+
+                    estoque.entrada(itemPedido.getProduto(), itemPedido.getQnt_item());
+
+                    itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
+                }
             }
         } else {
+
             this.informarFormaPagamento();
+
             for (ItemPedido itemPedido : itemPedidoLista) {
-                estoque.saida(itemPedido.getProduto(), itemPedido.getQnt_item());
-                itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
+                if (itemPedido.getStatusPedido() != StatusPedido.CANCELADO) {
+                    estoque.saida(itemPedido.getProduto(), itemPedido.getQnt_item());
+
+                    itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
+                }
             }
         }
         System.out.println("Pedido Efetuado com Sucesso\n");
 
     }
 
+    public Produto buscarProduto(String descricao) {
+        Produto produtoEncontrado = new Produto();
+        boolean flagProdutoEncontrado = false;
+
+        for (Produto produto : estoque.estoqueProdutos.keySet()) {
+            if (produto.getDescricao() == descricao) {
+                produtoEncontrado = produto;
+                flagProdutoEncontrado = true;
+                System.out.println("Produto Encontrado!");
+            }
+        }
+        if (!flagProdutoEncontrado) {
+
+        }
+        return produtoEncontrado;
+    }
 }

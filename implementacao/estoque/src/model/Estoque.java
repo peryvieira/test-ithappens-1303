@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package model;
 
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  *
@@ -13,14 +10,14 @@ import java.util.HashMap;
  */
 public class Estoque {
     private Filial filial;
-    private HashMap<Produto, Integer> estoque = new HashMap<Produto, Integer>();
+    public HashMap<Produto, Integer> estoqueProdutos = new HashMap<Produto, Integer>();
 
     public Estoque(Filial filial) {
         this.filial = filial;
     }
 
     public int getQnt_estoque(Produto produto) {
-        return this.estoque.get(produto);
+        return this.estoqueProdutos.get(produto);
     }
 
     public void entrada(Produto produto, int quantidade) {
@@ -28,10 +25,10 @@ public class Estoque {
         if (quantidade <= 0)
             System.err.println("Quantidade inválida");
         else {
-            if (this.estoque.get(produto) == null) {
-                this.estoque.put(produto, quantidade);
+            if (this.estoqueProdutos.get(produto) == null) {
+                this.estoqueProdutos.put(produto, quantidade);
             } else {
-                this.estoque.put(produto, estoque.get(produto) + quantidade);
+                this.estoqueProdutos.put(produto, estoqueProdutos.get(produto) + quantidade);
 
             }
 
@@ -39,11 +36,24 @@ public class Estoque {
     }
 
     public void saida(Produto produto, int quantidade) {
-        if (estoque.get(produto) - quantidade < 0) {
-            System.err.println("Quantidade no estoque insuficiente\n");
+        if (estoqueProdutos.get(produto) - quantidade < 0) {
+            System.err.println("Quantidade no estoqueProdutos insuficiente\n");
         } else {
-            estoque.put(produto, estoque.get(produto) - quantidade);
+            estoqueProdutos.put(produto, estoqueProdutos.get(produto) - quantidade);
         }
     }
 
+    public Produto buscarProdutoDescricao(String descricao) {
+        Produto produtoEncontrado = new Produto();
+
+
+        for (Produto produto : estoqueProdutos.keySet()) {
+            if (produto.getDescricao().equals(descricao)) {
+                produtoEncontrado = produto;
+                System.out.println("\nProduto Encontrado!");
+            }
+        }
+
+        return produtoEncontrado;
+    }
 }
