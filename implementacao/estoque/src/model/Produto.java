@@ -9,17 +9,17 @@ public class Produto {
     private int id;
     private String descricao;
     private double valor_custo;
-    private double valor_venda;
+    private double valor_unitario;
     private String codigo;
 
     public Produto() {
 
     }
 
-    public Produto(String descricao, double valor_custo, double valor_venda) {
+    public Produto(String descricao, double valor_custo, double valor_unitario) {
         this.descricao = descricao;
         this.valor_custo = valor_custo;
-        this.valor_venda = valor_venda;
+        this.valor_unitario = valor_unitario;
     }
 
     public String getDescricao() {
@@ -46,12 +46,12 @@ public class Produto {
         this.valor_custo = valor_custo;
     }
 
-    public double getValor_venda() {
-        return valor_venda;
+    public double getValor_unitario() {
+        return valor_unitario;
     }
 
-    public void setValor_venda(double valor_venda) {
-        this.valor_venda = valor_venda;
+    public void setValor_unitario(double valor_unitario) {
+        this.valor_unitario = valor_unitario;
     }
 
     public String getCodigo() {
