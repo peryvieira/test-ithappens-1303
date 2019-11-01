@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ArrayList;
 import model.TipoPedido;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  *
@@ -109,7 +111,7 @@ public class PedidoEstoque {
 
                 itemPedidoLista.add(item);
 
-                System.out.println("Item " + produto.getDescricao() + " adicionado ");
+                System.out.println("Item " + produto.getDescricao() + " adicionado ao Pedido ");
             }
         } else {
             if (quantidade >= 0) {
@@ -129,7 +131,7 @@ public class PedidoEstoque {
                 }
 
                 System.out.println(
-                        String.valueOf(quantidade) + " " + produto.getDescricao() + " Adicionado(s) ao Pedido");
+                        String.valueOf(quantidade) + " " + produto.getDescricao() + " Adicionado(s) ao Estoque\n");
 
             }
         }
@@ -138,16 +140,18 @@ public class PedidoEstoque {
     public void excluirItemPedido(Produto produto) {
         boolean flagExcluido = false;
 
-        for (ItemPedido itemPedido : itemPedidoLista) {
-            if (itemPedido.getProduto() == produto) {
-                itemPedidoLista.remove(itemPedido);
+        for (Iterator<ItemPedido> itemPedido = itemPedidoLista.iterator(); itemPedido.hasNext();) {
+            ItemPedido item = itemPedido.next();
+            if (item.getProduto() == produto) {
+                itemPedido.remove();
                 flagExcluido = true;
             }
         }
+
         if (flagExcluido) {
-            System.out.println("Produto " + produto.getDescricao() + " removido");
+            System.out.println("Produto " + produto.getDescricao() + " removido\n");
         } else {
-            System.out.println("Produto não encontrado no Pedido");
+            System.out.println("Produto não encontrado no Pedido\n");
         }
     }
 
@@ -201,19 +205,18 @@ public class PedidoEstoque {
     public void concluirPedido() {
         if (tipoPedido == TipoPedido.ENTRADA) {
 
-            this.informarFormaPagamento();
-
             for (ItemPedido itemPedido : itemPedidoLista) {
                 estoque.entrada(itemPedido.getProduto(), itemPedido.getQnt_item());
                 itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
             }
         } else {
+            this.informarFormaPagamento();
             for (ItemPedido itemPedido : itemPedidoLista) {
                 estoque.saida(itemPedido.getProduto(), itemPedido.getQnt_item());
                 itemPedido.setStatusPedido(StatusPedido.PROCESSADO);
             }
         }
-        System.out.println("Pedido Efetuado com Sucesso");
+        System.out.println("Pedido Efetuado com Sucesso\n");
 
     }
 

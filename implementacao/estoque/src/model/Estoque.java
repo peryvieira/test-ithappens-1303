@@ -40,7 +40,7 @@ public class Estoque {
 
     public void saida(Produto produto, int quantidade) {
         if (estoque.get(produto) - quantidade < 0) {
-            System.err.println("Quantidade no estoque insuficiente");
+            System.err.println("Quantidade no estoque insuficiente\n");
         } else {
             estoque.put(produto, estoque.get(produto) - quantidade);
         }
